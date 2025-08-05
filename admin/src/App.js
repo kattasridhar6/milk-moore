@@ -81,7 +81,7 @@ function App() {
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/search" element={<SearchResults />} />
-              <Route path="*" element={<Navigate to="/dashboard" />} />
+              <Route path="*" element={<Navigate to="/dashboard" />} /> 
             </Routes>
           </div>
         </>
