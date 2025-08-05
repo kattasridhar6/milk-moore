@@ -5,7 +5,7 @@ const Sidebar = ({ isOpen }) => {
   return (
     <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <ul className="sidebar-list">
-        <li><Link className="sidebar-item" to="/dashboard">Dashboard</Link></li>
+        <li><Link className="sidebar-item" to="/dashboard">Dashboard mike</Link></li>
         <li><Link className="sidebar-item" to="/Stock">Stock</Link></li>
         <li><Link className="sidebar-item" to="/Products">Products</Link></li>
         <li><Link className="sidebar-item" to="/partners">My Partners</Link></li>
