@@ -6,7 +6,7 @@ import Login from './components/login';
 import Products from './components/products';
 import Cart from './components/cart';
 import OrderHistory from './components/orderhistory';
-
+import Signup from './components/Signup'
 import './App.css';
 
 const getInitialAuth = () => {
@@ -31,6 +31,8 @@ function App() {
           path="/"
           element={<Login setIsAuthenticated={setIsAuthenticated} />}
         />
+
+        <Route path="/signup" element={<Signup />} />
         <Route
           path="/home"
           element={isAuthenticated ? <Home /> : <Navigate to="/" replace />}

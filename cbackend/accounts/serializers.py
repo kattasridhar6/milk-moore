@@ -1,6 +1,18 @@
 from rest_framework import serializers
 from .models import Product
+from .models import EndUser
 
+
+class EndUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EndUser
+        fields = ['id', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        return EndUser.objects.create(**validated_data)
+
+        
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
