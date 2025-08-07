@@ -6,6 +6,7 @@ const Products = () => {
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [unit, setUnit] = useState('kilograms');
+  const [imageFile, setImageFile] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showCard, setShowCard] = useState(false);
   const cardRef = useRef(null);
@@ -47,26 +48,37 @@ const Products = () => {
     setProductName('');
     setPrice('');
     setUnit('kilograms');
+    setImageFile(null);
   };
 
   const handleAddOrUpdateProduct = async (e) => {
     e.preventDefault();
     if (!productName || !price) return;
 
-    const payload = {
-      name: productName,
-      price: parseFloat(price),
-      unit,
-    };
+    const formData = new FormData();
+    formData.append('name', productName);
+    formData.append('price', price);
+    formData.append('unit', unit);
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
 
     try {
       if (editingProduct) {
-        const res = await axios.put(`${API_URL}${editingProduct.id}/`, payload);
+        const res = await axios.put(`${API_URL}${editingProduct.id}/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
         setProducts((prev) =>
           prev.map((p) => (p.id === editingProduct.id ? res.data : p))
         );
       } else {
-        const res = await axios.post(API_URL, payload);
+        const res = await axios.post(API_URL, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
         setProducts([...products, res.data]);
       }
       closeCard();
@@ -99,8 +111,9 @@ const Products = () => {
   };
 
   return (
-    <div className="sub-container">
-      <h2 className="my-admin-title">Products</h2>
+    <div className="p-6">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800">Products</h2>
+
       <button
         onClick={() => {
           setShowCard(!showCard);
@@ -108,62 +121,87 @@ const Products = () => {
           setProductName('');
           setPrice('');
           setUnit('kilograms');
+          setImageFile(null);
         }}
-        className="my-admin-button"
+        className="mb-6 bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded transition"
       >
         {showCard ? 'Close' : 'Add Product'}
       </button>
 
       {showCard && (
-        <div className="card-overlay">
-          <div className="floating-stock-card" ref={cardRef}>
-            <h3>{editingProduct ? 'Edit Product' : 'Add Product'}</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div
+            className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md space-y-4"
+            ref={cardRef}
+          >
+            <h3 className="text-xl font-semibold mb-2">{editingProduct ? 'Edit Product' : 'Add Product'}</h3>
 
-            <form onSubmit={handleAddOrUpdateProduct}>
-              <label>Product Name:</label>
-              <input
-                className="float-card-input"
-                type="text"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                placeholder="e.g., Toned Milk"
-                required
-              />
-
-              <label>Price (₹):</label>
-              <input
-                className="float-card-input"
-                type="number"
-                step="0.01"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="Price Per Kilogram/Liter"
-                required
-              />
-
-              <label>Unit:</label>
-              <div className="radio-group">
-                <label>
-                  <input
-                    type="radio"
-                    value="kilograms"
-                    checked={unit === 'kilograms'}
-                    onChange={(e) => setUnit(e.target.value)}
-                  />
-                  Kilogram (Kgs)
-                </label>
-                <label style={{ marginLeft: '1rem' }}>
-                  <input
-                    type="radio"
-                    value="liters"
-                    checked={unit === 'liters'}
-                    onChange={(e) => setUnit(e.target.value)}
-                  />
-                  Liter (Lts)
-                </label>
+            <form onSubmit={handleAddOrUpdateProduct} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Product Name</label>
+                <input
+                  type="text"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  className="w-full mt-1 border rounded px-3 py-2"
+                  placeholder="e.g., Toned Milk"
+                  required
+                />
               </div>
 
-              <button type="submit">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Price (₹)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="w-full mt-1 border rounded px-3 py-2"
+                  placeholder="Price Per Kilogram/Liter"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                <div className="flex gap-6">
+                  <label className="flex items-center gap-2 text-gray-700">
+                    <input
+                      type="radio"
+                      value="kilograms"
+                      checked={unit === 'kilograms'}
+                      onChange={(e) => setUnit(e.target.value)}
+                      className="accent-blue-600"
+                    />
+                    Kilogram (Kgs)
+                  </label>
+                  <label className="flex items-center gap-2 text-gray-700">
+                    <input
+                      type="radio"
+                      value="liters"
+                      checked={unit === 'liters'}
+                      onChange={(e) => setUnit(e.target.value)}
+                      className="accent-blue-600"
+                    />
+                    Liter (Lts)
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Product Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImageFile(e.target.files[0])}
+                  className="mt-1"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition"
+              >
                 {editingProduct ? 'Update' : 'Add'}
               </button>
             </form>
@@ -171,18 +209,32 @@ const Products = () => {
         </div>
       )}
 
-      <div className="stock-card-container">
+      {/* Product Display Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {products.map((product) => (
-          <div className="stock-display-card" key={product.id}>
-            <h4>{product.name}</h4>
-            <p>
+          <div key={product.id} className="bg-white rounded shadow p-4">
+            {product.image && (
+              <img
+                src={`http://localhost:8000${product.image}`}
+                alt={product.name}
+                className="w-full h-32 object-contain rounded mb-2"
+              />
+            )}
+            <h4 className="text-lg font-semibold text-gray-800">{product.name}</h4>
+            <p className="text-gray-600 mt-1">
               <strong>Price:</strong> ₹{product.price} / Per {formatUnit(product.unit)}
             </p>
-            <div className="Alter-card">
-              <button className="edit-button" onClick={() => handleEdit(product)}>
+            <div className="flex gap-3 mt-4">
+              <button
+                className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded"
+                onClick={() => handleEdit(product)}
+              >
                 Edit
               </button>
-              <button className="delete-button" onClick={() => handleDelete(product.id)}>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                onClick={() => handleDelete(product.id)}
+              >
                 Delete
               </button>
             </div>

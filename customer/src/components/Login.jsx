@@ -1,56 +1,62 @@
-import React, { useState } from 'react';
-import '../App.css';
-import axios from 'axios';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import logo from '../img/logo.jpg'
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+const Login = ({ setIsAuthenticated }) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
+  const handleLogin = (e) => {
+    e.preventDefault()
 
-    try {
-      const response = await axios.post('http://localhost:8000/api/login/', {
-        email,
-        password,
-      });
-
-      const { token } = response.data;
-      localStorage.setItem('token', token);
-      alert('Login successful!');
-      // redirect logic if needed
-    } catch (err) {
-      setError('Invalid credentials. Please try again.');
+    // Hardcoded credentials
+    if (username === 'a' && password === 'a') {
+      setIsAuthenticated(true)
+      localStorage.setItem('isAuthenticated', 'true')
+      navigate('/home')
+    } else {
+      setError('Invalid credentials')
     }
-  };
+  }
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleLogin}>
-        <h2 className="login-title">User Login</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          className="login-input"
-          onChange={(e) => setEmail(e.target.value)}
-          required
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <img
+          src={logo}
+          alt="Logo"
+          className="mx-auto "
+          style={{ width: '100px', height: 'auto' }}
         />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          className="login-input"
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit" className="login-button">Logoin</button>
-        {error && <p className="login-error">{error}</p>}
-      </form>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">Login</h2>
+        <form onSubmit={handleLogin} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-200"
+          >
+            Login
+          </button>
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        </form>
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

@@ -8,8 +8,9 @@ const Navbar = ({ setIsAuthenticated, sidebarOpen, setSidebarOpen }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
+    localStorage.clear(); // ✅ Clear token and any other data
     setIsAuthenticated(false);
+    navigate('/login');   // ✅ Navigate to login page without reload
   };
 
   const handleSearch = (e) => {
@@ -19,40 +20,63 @@ const Navbar = ({ setIsAuthenticated, sidebarOpen, setSidebarOpen }) => {
   };
 
   return (
-    <nav className="main-navbar">
-      <div className="navbar-left">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#1f1f2e] text-white flex items-center justify-between px-6 py-1.5 h-15 shadow-md">
+      {/* Left: Logo and Toggle */}
+      <div className="flex items-center text-white font-bold text-lg">
         <button
-          className="menu-btn"
+          className="mr-3 text-xl text-white focus:outline-none"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-label="Toggle sidebar"
         >
           <FaBars />
         </button>
-               <img src={logo} className='Logo' alt="Description" 
-                style={{ width: '45px', height: '42px' , borderRadius:'60px', marginRight:'10px'}}  />
-        <Link to="/" className="logo">MILK MOORE </Link>
+        <img
+          src={logo}
+          alt="Logo"
+          className="w-[45px] h-[42px] rounded-full mr-2"
+        />
+        <Link to="/" className="text-white text-xl font-bold">
+          MILK MOORE
+        </Link>
       </div>
 
-      <div className="navbar-center">
-        <Link to="/about" className="nav-link">About</Link>
-        <Link to="/messages" className="nav-link"><FaComment /></Link>
-        <Link to="/notifications" className="nav-link"><FaBell /></Link>
-        <Link to="/profile" className="nav-link"><FaUser /></Link>
+      {/* Center: Nav Links */}
+      <div className="hidden md:flex items-center gap-8 text-white font-semibold text-sm">
+        <Link to="/about" className="hover:text-blue-400 transition">
+          About
+        </Link>
+        <Link to="/messages" className="hover:text-blue-400 transition">
+          <FaComment />
+        </Link>
+        <Link to="/notifications" className="hover:text-blue-400 transition">
+          <FaBell />
+        </Link>
+        <Link to="/profile" className="hover:text-blue-400 transition">
+          <FaUser />
+        </Link>
       </div>
 
-      <div className="navbar-right">
-        <div className="search-container">
+      {/* Right: Search + Logout */}
+      <div className="flex items-center gap-4">
+        <div className="flex items-center bg-white rounded-full px-3 h-[34px] shadow-md w-[268px] focus-within:shadow-outline transition-shadow">
           <input
             type="text"
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={handleSearch}
-            className="search-input"
+            className="flex-1 text-gray-800 bg-transparent focus:outline-none text-sm placeholder-gray-400"
           />
-          <button className="search-btn"><FaSearch /></button>
+          <button className="text-blue-500 hover:text-blue-600">
+            <FaSearch />
+          </button>
         </div>
-        <button onClick={handleLogout} className="logout-btn">Logout</button>
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-semibold transition text-sm"
+        >
+          Logout
+        </button>
       </div>
     </nav>
   );

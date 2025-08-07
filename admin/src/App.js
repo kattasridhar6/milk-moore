@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-
-import './App.css';
 
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -38,56 +41,60 @@ function App() {
         if (decoded.exp > now) {
           setIsAuthenticated(true);
         } else {
-          // Token expired
-          handleLogout();
+          localStorage.clear(); // Token expired
+          setIsAuthenticated(false);
         }
       } catch (err) {
         // Invalid token
-        handleLogout();
+        localStorage.clear();
+        setIsAuthenticated(false);
       }
     } else {
       setIsAuthenticated(false);
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    setIsAuthenticated(false);
-    window.location.href = '/login';
-  };
-
   return (
     <Router>
       {isAuthenticated ? (
         <>
+          {/* Navbar */}
           <Navbar
             setIsAuthenticated={setIsAuthenticated}
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
           />
+          {/* Sidebar */}
           <Sidebar isOpen={sidebarOpen} />
-          <div className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
-            <Routes>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/Stock" element={<Stock />} />
-              <Route path="/Products" element={<Products />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/partners" element={<Partners />} />
-              <Route path="/bills" element={<Bills />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/wallet" element={<Wallet />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/search" element={<SearchResults />} />
-              <Route path="*" element={<Navigate to="/dashboard" />} /> 
-            </Routes>
+
+          {/* Main Content */}
+          <div className={`flex ${sidebarOpen ? 'ml-[220px]' : 'ml-0'} transition-all`}>
+            <div className="w-full p-6 bg-gray-100">
+              <Routes>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/stock" element={<Stock />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/partners" element={<Partners />} />
+                <Route path="/bills" element={<Bills />} />
+                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/wallet" element={<Wallet />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/search" element={<SearchResults />} />
+                <Route path="*" element={<Navigate to="/dashboard" />} />
+              </Routes>
+            </div>
           </div>
         </>
       ) : (
         <Routes>
-          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+          <Route
+            path="/login"
+            element={<Login setIsAuthenticated={setIsAuthenticated} />}
+          />
           <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>

@@ -121,8 +121,9 @@ const Stock = () => {
   }, {});
 
   return (
-    <div className="sub-container">
-      <h2 className="my-admin-title">Stock</h2>
+    <div className="p-6">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800">Stock</h2>
+
       <button
         onClick={() => {
           setShowCard(!showCard);
@@ -136,102 +137,131 @@ const Stock = () => {
             return today.toISOString().split('T')[0];
           });
         }}
-        className="my-admin-button"
+        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
       >
         {showCard ? 'Close' : 'Add Stock'}
       </button>
 
       {showCard && (
-        <div className="card-overlay">
-          <div className="floating-stock-card" ref={cardRef}>
-            <h3>{editMode ? 'Edit Milk Stock' : 'Add Milk Stock'}</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div
+            ref={cardRef}
+            className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md space-y-4"
+          >
+            <h3 className="text-xl font-semibold mb-2">{editMode ? 'Edit Milk Stock' : 'Add Milk Stock'}</h3>
 
-            <label>Milk Type:</label>
-            <select
-              value={milkType}
-              onChange={(e) => setMilkType(e.target.value)}
-              disabled={editMode}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Milk Type</label>
+              <select
+                className="w-full mt-1 border rounded px-3 py-2"
+                value={milkType}
+                onChange={(e) => setMilkType(e.target.value)}
+                disabled={editMode}
+              >
+                <option value="">-- Select Milk Type --</option>
+                {productOptions.map((product) => (
+                  <option key={product.id} value={product.name}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Quantity (Litres | Kilograms)</label>
+              <input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                className="w-full mt-1 border rounded px-3 py-2"
+                placeholder="e.g., 10"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Procured From</label>
+              <input
+                type="text"
+                value={procuredFrom}
+                onChange={(e) => setProcuredFrom(e.target.value)}
+                className="w-full mt-1 border rounded px-3 py-2"
+                placeholder="Supplier name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Date of Procurement</label>
+              <input
+                type="date"
+                value={procurementDate}
+                onChange={(e) => setProcurementDate(e.target.value)}
+                className="w-full mt-1 border rounded px-3 py-2"
+              />
+            </div>
+
+            <button
+              onClick={handleAddStock}
+              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
             >
-              <option value="">-- Select Milk Type --</option>
-              {productOptions.map((product) => (
-                <option key={product.id} value={product.name}>
-                  {product.name}
-                </option>
-              ))}
-            </select>
-
-            <label>Quantity (Litres | Kilograms):</label>
-            <input
-              className="float-card-input"
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              placeholder="e.g., 10"
-            />
-
-            <label>Procured From:</label>
-            <input className="float-card-input"
-              type="text"
-              value={procuredFrom}
-              onChange={(e) => setProcuredFrom(e.target.value)}
-              placeholder="Supplier name"
-            />
-
-            <label>Date of Procurement:</label>
-            <input className="float-card-input"
-              type="date"
-              value={procurementDate}
-              onChange={(e) => setProcurementDate(e.target.value)}
-            />
-
-            <button onClick={handleAddStock} className="submit-button">
               {editMode ? 'Update' : 'Add'}
             </button>
           </div>
         </div>
       )}
 
-      {Object.keys(groupedStock).length > 0 && (
-        <div className="stock-card-container">
-          {Object.entries(groupedStock).map(([milkType, totalQuantity]) => (
-            <div className="stock-display-card" key={milkType}>
-              <h4>{milkType}</h4>
-              <p><strong>Total Quantity:</strong> {totalQuantity} Litres | Kilograms</p>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Grouped Stock Cards */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        {Object.entries(groupedStock).map(([milkType, totalQuantity]) => (
+          <div key={milkType} className="bg-white rounded shadow p-4">
+            <h4 className="text-lg font-semibold">{milkType}</h4>
+            <p className="text-gray-600">
+              <strong>Total Quantity:</strong> {totalQuantity} Litres | Kilograms
+            </p>
+          </div>
+        ))}
+      </div>
 
-      {stockList.length > 0 && (
-        <div className="stock-history-table">
-          <h3 className="table-heading">Stock Procurement History</h3>
-          <table className="styled-table">
+      {/* Stock History Table */}
+      <div className="mt-10">
+        <h3 className="text-xl font-bold mb-4 text-gray-700">Stock Procurement History</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full border border-gray-300 bg-white shadow">
             <thead>
-              <tr>
-                <th>Milk Type</th>
-                <th>Quantity</th>
-                <th>Procured From</th>
-                <th>Date</th>
-                <th>Actions</th>
+              <tr className="bg-gray-100 text-gray-700">
+                <th className="px-4 py-2 border">Milk Type</th>
+                <th className="px-4 py-2 border">Quantity</th>
+                <th className="px-4 py-2 border">Procured From</th>
+                <th className="px-4 py-2 border">Date</th>
+                <th className="px-4 py-2 border">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {stockList.map(item => (
-                <tr key={item.id}>
-                  <td>{item.milk_type}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.procured_from || '-'}</td>
-                  <td>{item.procurement_date || '-'}</td>
-                  <td>
-                    <button className="edit-button" onClick={() => handleEdit(item)}>Edit</button>
-                    <button className="delete-button" onClick={() => handleDelete(item.id)}>Delete</button>
+              {stockList.map((item) => (
+                <tr key={item.id} className="text-center">
+                  <td className="px-4 py-2 border">{item.milk_type}</td>
+                  <td className="px-4 py-2 border">{item.quantity}</td>
+                  <td className="px-4 py-2 border">{item.procured_from || '-'}</td>
+                  <td className="px-4 py-2 border">{item.procurement_date || '-'}</td>
+                  <td className="px-4 py-2 border space-x-2">
+                    <button
+                      onClick={() => handleEdit(item)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      )}
+      </div>
     </div>
   );
 };
