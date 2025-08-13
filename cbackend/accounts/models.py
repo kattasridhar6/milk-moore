@@ -1,6 +1,16 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
+class EndUser(models.Model):
+    username = models.CharField(max_length=150, unique=True)
+    password = models.CharField(max_length=128)  # Hashed password
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username
+
+
 class Product(models.Model):
     UNIT_CHOICES = [
         ('kilograms', 'Kilograms'),
@@ -12,15 +22,11 @@ class Product(models.Model):
     unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default='grams')
     added_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'accounts_product'  # Make sure this matches the existing table
+        managed = False                # Prevent Django from creating or altering this table
+
     def __str__(self):
         return f"{self.name} - ₹{self.price} / {self.unit}"
 
 
-
-class EndUser(models.Model):
-    username = models.CharField(max_length=150, unique=True)
-    password = models.CharField(max_length=128)  # Hashed password
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.username
