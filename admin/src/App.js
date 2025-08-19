@@ -65,11 +65,10 @@ function App() {
             setSidebarOpen={setSidebarOpen}
           />
           {/* Sidebar */}
-          <Sidebar isOpen={sidebarOpen} />
+          <Sidebar isOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
           {/* Main Content */}
-          <div className={`flex ${sidebarOpen ? 'ml-[220px]' : 'ml-0'} transition-all`}>
-            <div className="w-full p-6 bg-gray-100">
+          <div className={`flex px-2 mt-16 mr-2 bg-slate-100 transition-all ${sidebarOpen ? 'ml-[230px]' : 'ml-2'}`}>
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/stock" element={<Stock />} />
@@ -86,7 +85,6 @@ function App() {
                 <Route path="/search" element={<SearchResults />} />
                 <Route path="*" element={<Navigate to="/dashboard" />} />
               </Routes>
-            </div>
           </div>
         </>
       ) : (

@@ -5,7 +5,7 @@ import DTable from '../components/DTable';
 
 const Dashboard = () => {
   return (
-    <div className="p-6 sm:ml-[0px] bg-gray-100 min-h-screen">
+    <div className="flex-1 mt-3">
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">Welcome to the Dashboard</h2>
 
       {/* Cards Section */}

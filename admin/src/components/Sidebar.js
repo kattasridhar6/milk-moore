@@ -1,16 +1,36 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const Sidebar = ({ isOpen }) => {
+const Sidebar = ({ isOpen, setSidebarOpen }) => {
+  const sidebarRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setSidebarOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, setSidebarOpen]);
+
   return (
     <div
-      className={`fixed top-12 left-0 h-[calc(100vh-48px)] w-[220px] bg-[#2c2f48] pt-4 z-40 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+      ref={sidebarRef}
+      className={`fixed top-12 left-0 h-[calc(100vh-48px)] w-[230px] bg-[#2c2f48] pt-4 z-40 transition-transform duration-300 ease-in-out ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}
     >
-      <ul className="list-none m-0 p-0 space-y-1">
+      <ul className="list-none m-0 p-0 space-y-2">
         <li>
           <Link
-            className="block w-[90%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
+            className="block w-[99%] px-3 py-3 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
             to="/dashboard"
           >
             Dashboard
@@ -18,15 +38,7 @@ const Sidebar = ({ isOpen }) => {
         </li>
         <li>
           <Link
-            className="block w-[90%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
-            to="/Stock"
-          >
-            Stock
-          </Link>
-        </li>
-        <li>
-          <Link
-            className="block w-[90%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
+            className="block w-[99%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
             to="/Products"
           >
             Products
@@ -34,15 +46,15 @@ const Sidebar = ({ isOpen }) => {
         </li>
         <li>
           <Link
-            className="block w-[90%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
-            to="/partners"
+            className="block w-[99%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
+            to="/Stock"
           >
-            My Partners
+            Stock
           </Link>
         </li>
-        <li>
+         <li>
           <Link
-            className="block w-[90%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
+            className="block w-[99%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
             to="/orders"
           >
             Orders
@@ -50,7 +62,16 @@ const Sidebar = ({ isOpen }) => {
         </li>
         <li>
           <Link
-            className="block w-[90%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
+            className="block w-[99%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
+            to="/partners"
+          >
+            My Partners
+          </Link>
+        </li>
+       
+        <li>
+          <Link
+            className="block w-[99%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
             to="/bills"
           >
             Bills & Invoices
@@ -58,7 +79,7 @@ const Sidebar = ({ isOpen }) => {
         </li>
         <li>
           <Link
-            className="block w-[90%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
+            className="block w-[99%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
             to="/calendar"
           >
             Delivery Calendar
@@ -66,7 +87,7 @@ const Sidebar = ({ isOpen }) => {
         </li>
         <li>
           <Link
-            className="block w-[90%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
+            className="block w-[99%] px-3 py-2 text-sm text-gray-300 font-medium rounded hover:bg-[#3b3e5a] hover:text-white transition"
             to="/wallet"
           >
             Wallet
